@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { FaUser, FaEnvelope, FaLock, FaGoogle, FaGithub } from 'react-icons/fa';
+import { FaEnvelope, FaGithub, FaGoogle, FaLock, FaUser } from 'react-icons/fa';
+import { useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { registerUser } from '../../firebase/auth';
+import { setUser } from '../../store/slices/authSlice';
 import { addNotification } from '../../store/slices/uiSlice';
-// Import your auth service here
-// import { registerWithEmailPassword, loginWithGoogle, loginWithGithub } from '../../services/authService';
 
 const RegisterPage = () => {
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
@@ -18,23 +18,39 @@ const RegisterPage = () => {
   const onSubmit = async (data) => {
     try {
       setLoading(true);
-      // Uncomment when auth service is implemented
-      // await registerWithEmailPassword(data.name, data.email, data.password);
+      const userCredential = await registerUser(data.email, data.password);
+      const user = userCredential.user;
       
-      // For demo purposes, simulate successful registration
-      console.log('Registration successful with:', data);
+      // Update user display name
+      await user.updateProfile({
+        displayName: data.name
+      });
+      
+      dispatch(setUser({
+        uid: user.uid,
+        email: user.email,
+        displayName: data.name,
+      }));
       
       dispatch(addNotification({
         type: 'success',
         message: 'Registration successful! Welcome to FitNova.'
       }));
       
-      navigate('/app/dashboard');
+      navigate('/app/profile');
     } catch (error) {
       console.error('Registration error:', error);
+      let errorMessage = 'Failed to register. Please try again.';
+      
+      if (error.code === 'auth/email-already-in-use') {
+        errorMessage = 'Email already in use. Please log in instead.';
+      } else if (error.code === 'auth/weak-password') {
+        errorMessage = 'Password is too weak. Please use a stronger password.';
+      }
+      
       dispatch(addNotification({
         type: 'error',
-        message: error.message || 'Failed to register. Please try again.'
+        message: errorMessage
       }));
     } finally {
       setLoading(false);
@@ -44,18 +60,11 @@ const RegisterPage = () => {
   const handleGoogleLogin = async () => {
     try {
       setLoading(true);
-      // Uncomment when auth service is implemented
-      // await loginWithGoogle();
-      
-      // For demo purposes
-      console.log('Google login initiated');
-      
+      // Google login not yet implemented
       dispatch(addNotification({
-        type: 'success',
-        message: 'Google login successful!'
+        type: 'info',
+        message: 'Google login coming soon!'
       }));
-      
-      navigate('/app/dashboard');
     } catch (error) {
       console.error('Google login error:', error);
       dispatch(addNotification({
@@ -70,18 +79,11 @@ const RegisterPage = () => {
   const handleGithubLogin = async () => {
     try {
       setLoading(true);
-      // Uncomment when auth service is implemented
-      // await loginWithGithub();
-      
-      // For demo purposes
-      console.log('GitHub login initiated');
-      
+      // GitHub login not yet implemented
       dispatch(addNotification({
-        type: 'success',
-        message: 'GitHub login successful!'
+        type: 'info',
+        message: 'GitHub login coming soon!'
       }));
-      
-      navigate('/app/dashboard');
     } catch (error) {
       console.error('GitHub login error:', error);
       dispatch(addNotification({

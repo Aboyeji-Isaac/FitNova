@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { FaEnvelope, FaLock, FaGoogle, FaGithub } from 'react-icons/fa';
+import { FaEnvelope, FaGithub, FaGoogle, FaLock } from 'react-icons/fa';
+import { useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { loginUser } from '../../firebase/auth';
+import { setUser } from '../../store/slices/authSlice';
 import { addNotification } from '../../store/slices/uiSlice';
-// Import your auth service here
-// import { loginWithEmailPassword, loginWithGoogle, loginWithGithub } from '../../services/authService';
 
 const LoginPage = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -16,11 +16,14 @@ const LoginPage = () => {
   const onSubmit = async (data) => {
     try {
       setLoading(true);
-      // Uncomment when auth service is implemented
-      // await loginWithEmailPassword(data.email, data.password);
+      const userCredential = await loginUser(data.email, data.password);
+      const user = userCredential.user;
       
-      // For demo purposes, simulate successful login
-      console.log('Login successful with:', data);
+      dispatch(setUser({
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+      }));
       
       dispatch(addNotification({
         type: 'success',
@@ -42,18 +45,11 @@ const LoginPage = () => {
   const handleGoogleLogin = async () => {
     try {
       setLoading(true);
-      // Uncomment when auth service is implemented
-      // await loginWithGoogle();
-      
-      // For demo purposes
-      console.log('Google login initiated');
-      
+      // Google login not yet implemented
       dispatch(addNotification({
-        type: 'success',
-        message: 'Google login successful!'
+        type: 'info',
+        message: 'Google login coming soon!'
       }));
-      
-      navigate('/app/dashboard');
     } catch (error) {
       console.error('Google login error:', error);
       dispatch(addNotification({
@@ -68,18 +64,11 @@ const LoginPage = () => {
   const handleGithubLogin = async () => {
     try {
       setLoading(true);
-      // Uncomment when auth service is implemented
-      // await loginWithGithub();
-      
-      // For demo purposes
-      console.log('GitHub login initiated');
-      
+      // GitHub login not yet implemented
       dispatch(addNotification({
-        type: 'success',
-        message: 'GitHub login successful!'
+        type: 'info',
+        message: 'GitHub login coming soon!'
       }));
-      
-      navigate('/app/dashboard');
     } catch (error) {
       console.error('GitHub login error:', error);
       dispatch(addNotification({

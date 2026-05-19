@@ -50,14 +50,14 @@ const Sidebar = () => {
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-20 bg-gray-600 bg-opacity-75 md:hidden"
+          className="fixed inset-0 z-9 bg-gray-600 bg-opacity-75 md:hidden"
           onClick={closeSidebar}
         ></div>
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-30 h-full w-64 transform bg-white shadow-lg transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:h-auto md:shadow-none ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+        className={`fixed top-0 left-0 z-9 h-full w-64 transform bg-white shadow-lg transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:h-auto md:shadow-none ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
         <div className="flex h-16 items-center justify-between border-b border-gray-200 px-4">
           <div className="flex items-center">

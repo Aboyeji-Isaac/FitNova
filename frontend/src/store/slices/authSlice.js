@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import authService from '../../services/authService'
 
 const initialState = {
@@ -57,6 +57,16 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    setUser: (state, action) => {
+      state.user = action.payload
+      state.isAuthenticated = true
+      state.isAdmin = action.payload?.role === 'admin'
+    },
+    clearUser: (state) => {
+      state.user = null
+      state.isAuthenticated = false
+      state.isAdmin = false
+    },
     resetAuthState: (state) => {
       state.error = null
       state.isLoading = false
@@ -124,6 +134,6 @@ const authSlice = createSlice({
   },
 })
 
-export const { resetAuthState } = authSlice.actions
+export const { setUser, clearUser, resetAuthState } = authSlice.actions
 
 export default authSlice.reducer

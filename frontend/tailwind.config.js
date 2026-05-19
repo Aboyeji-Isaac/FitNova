@@ -7,32 +7,41 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Dark theme backgrounds
+        dark: {
+          bg: '#0F1419',
+          card: '#1A1F2E',
+          border: '#2A2F3E',
+        },
+        // Primary: Orange/Gold (Retro gaming)
         primary: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
-          950: '#082f49',
+          50: '#fff8f0',
+          100: '#ffe8cc',
+          200: '#ffd699',
+          300: '#ffc366',
+          400: '#ffb133',
+          500: '#FF8C00',
+          600: '#E67E00',
+          700: '#CC7000',
+          800: '#B26200',
+          900: '#995400',
+          950: '#663800',
         },
+        // Secondary: Burgundy/Red
         secondary: {
-          50: '#fdf4ff',
-          100: '#fae8ff',
-          200: '#f5d0fe',
-          300: '#f0abfc',
-          400: '#e879f9',
-          500: '#d946ef',
-          600: '#c026d3',
-          700: '#a21caf',
-          800: '#86198f',
-          900: '#701a75',
-          950: '#4a044e',
+          50: '#fef2f2',
+          100: '#fde8e8',
+          200: '#fbd5d5',
+          300: '#f8a8a8',
+          400: '#f27b7b',
+          500: '#D32F2F',
+          600: '#C41C3B',
+          700: '#A91D3A',
+          800: '#8B1538',
+          900: '#6F0F33',
+          950: '#4a0620',
         },
+        // Success: Green/Teal
         success: {
           50: '#f0fdf4',
           100: '#dcfce7',
@@ -46,6 +55,7 @@ export default {
           900: '#14532d',
           950: '#052e16',
         },
+        // Warning: Orange variants
         warning: {
           50: '#fffbeb',
           100: '#fef3c7',
@@ -59,6 +69,7 @@ export default {
           900: '#78350f',
           950: '#451a03',
         },
+        // Danger: Red
         danger: {
           50: '#fef2f2',
           100: '#fee2e2',
@@ -80,9 +91,14 @@ export default {
       animation: {
         'spin-slow': 'spin 3s linear infinite',
         'bounce-slow': 'bounce 3s infinite',
+        'pulse-glow': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       borderRadius: {
         '4xl': '2rem',
+      },
+      boxShadow: {
+        'neon': '0 0 10px rgba(255, 140, 0, 0.5)',
+        'neon-lg': '0 0 20px rgba(255, 140, 0, 0.7)',
       },
     },
   },
