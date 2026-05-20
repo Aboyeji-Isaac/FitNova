@@ -6,7 +6,7 @@ import {
   validateUpdateChallenge,
   validateChallengeId,
 } from '../middleware/validation.js';
-import { getDb } from '../services/firebaseAdmin.js';
+import { getDb } from '../sevices/firebaseAdmin.js';
 
 const router = express.Router();
 

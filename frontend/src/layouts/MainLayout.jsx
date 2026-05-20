@@ -12,6 +12,7 @@ const MainLayout = () => {
   const dispatch = useDispatch()
   const location = useLocation()
   const { sidebarOpen } = useSelector((state) => state.ui)
+  const showSidebar = location.pathname !== '/'
 
   // Close sidebar on route change on mobile
   useEffect(() => {
@@ -25,10 +26,10 @@ const MainLayout = () => {
       <Navbar />
       
       <div className="flex flex-1 pt-16">
-        <Sidebar />
+        {showSidebar && <Sidebar />}
         
         <main 
-          className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'md:ml-64' : ''}`}
+          className={`flex-1 transition-all duration-300 ${showSidebar && sidebarOpen ? 'md:ml-64' : ''}`}
         >
           <div className="container mx-auto px-4 py-6">
             <Outlet />

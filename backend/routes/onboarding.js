@@ -2,7 +2,7 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 import { authMiddleware } from '../middleware/auth.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
-import { getDb } from '../services/firebaseAdmin.js';
+import { getDb } from '../sevices/firebaseAdmin.js';
 
 const router = express.Router();
 

@@ -1,0 +1,32 @@
+:root {
+  /* backgrounds */
+  --bg-base:     #0c0c0c;
+  --bg-surface:  #161616;
+  --bg-elevated: #1a1a1a;
+
+  /* borders */
+  --border-subtle: 0.5px solid #2a2a2a;
+  --border-accent: 0.5px solid rgba(232, 98, 42, 0.4);
+
+  /* accent */
+  --accent:        #e8622a;
+  --accent-dim:    rgba(232, 98, 42, 0.15);
+  --accent-glow:   rgba(232, 98, 42, 0.3);
+
+  /* text */
+  --text-primary:   #ffffff;
+  --text-secondary: #888888;
+  --text-muted:     #555555;
+
+  /* semantic */
+  --color-success: #3b6d11;
+  --color-success-bg: rgba(59, 109, 17, 0.15);
+
+  /* radii */
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+
+  /* transitions */
+  --transition: 0.2s ease;
+}

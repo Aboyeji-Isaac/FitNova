@@ -3,9 +3,196 @@ import { FiAlertCircle, FiCheck, FiEye, FiEyeOff, FiLock, FiMail, FiUser } from 
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
+const S = {
+  page: {
+    minHeight: '100vh',
+    background: 'var(--bg-base, #0c0c0c)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '24px 16px',
+  },
+  card: {
+    width: '100%',
+    maxWidth: 420,
+    background: 'var(--bg-surface, #161616)',
+    border: '0.5px solid #2a2a2a',
+    borderRadius: 16,
+    padding: '36px 32px',
+  },
+  logo: {
+    textAlign: 'center',
+    marginBottom: 28,
+  },
+  logoText: {
+    fontSize: 22,
+    fontWeight: 600,
+    color: '#fff',
+    letterSpacing: '-0.02em',
+  },
+  logoAccent: {
+    color: '#e8622a',
+  },
+  heading: {
+    fontSize: 20,
+    fontWeight: 600,
+    color: '#fff',
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  subheading: {
+    fontSize: 13,
+    color: '#555',
+    textAlign: 'center',
+    marginBottom: 28,
+  },
+  link: {
+    color: '#e8622a',
+    textDecoration: 'none',
+    fontWeight: 500,
+  },
+  errorBanner: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: 10,
+    background: 'rgba(226, 75, 74, 0.08)',
+    border: '0.5px solid rgba(226, 75, 74, 0.3)',
+    borderRadius: 10,
+    padding: '12px 14px',
+    marginBottom: 20,
+  },
+  errorBannerIcon: {
+    color: '#E24B4A',
+    flexShrink: 0,
+    marginTop: 1,
+  },
+  errorBannerText: {
+    fontSize: 13,
+    color: '#E24B4A',
+  },
+  fieldGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 14,
+    marginBottom: 20,
+  },
+  label: {
+    display: 'block',
+    fontSize: 12,
+    fontWeight: 500,
+    color: '#888',
+    marginBottom: 6,
+    letterSpacing: '0.03em',
+  },
+  inputWrap: {
+    position: 'relative',
+  },
+  inputIcon: {
+    position: 'absolute',
+    left: 12,
+    top: '50%',
+    transform: 'translateY(-50%)',
+    color: '#555',
+    fontSize: 14,
+    pointerEvents: 'none',
+  },
+  inputIconRight: {
+    position: 'absolute',
+    right: 12,
+    top: '50%',
+    transform: 'translateY(-50%)',
+    color: '#555',
+    fontSize: 14,
+    cursor: 'pointer',
+    background: 'none',
+    border: 'none',
+    padding: 0,
+    display: 'flex',
+    alignItems: 'center',
+  },
+  input: {
+    width: '100%',
+    background: 'var(--bg-elevated, #1a1a1a)',
+    border: '0.5px solid #2a2a2a',
+    borderRadius: 10,
+    padding: '11px 12px 11px 36px',
+    fontSize: 13,
+    color: '#fff',
+    outline: 'none',
+    transition: 'border-color 0.2s',
+    boxSizing: 'border-box',
+    fontFamily: 'inherit',
+  },
+  inputWithToggle: {
+    paddingRight: 36,
+  },
+  inputError: {
+    borderColor: 'rgba(226, 75, 74, 0.6)',
+  },
+  inputFocused: {
+    borderColor: 'rgba(232, 98, 42, 0.5)',
+  },
+  errorText: {
+    fontSize: 11,
+    color: '#E24B4A',
+    marginTop: 5,
+  },
+  successRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 6,
+    color: '#3b6d11',
+    fontSize: 12,
+  },
+  strengthBars: {
+    display: 'flex',
+    gap: 4,
+    marginTop: 8,
+  },
+  strengthBar: {
+    flex: 1,
+    height: 3,
+    borderRadius: 2,
+    background: '#2a2a2a',
+    transition: 'background 0.3s',
+  },
+  strengthLabel: {
+    fontSize: 11,
+    marginTop: 5,
+  },
+  submitBtn: {
+    width: '100%',
+    background: '#e8622a',
+    color: '#fff',
+    border: 'none',
+    borderRadius: 10,
+    padding: '13px',
+    fontSize: 14,
+    fontWeight: 600,
+    cursor: 'pointer',
+    transition: 'opacity 0.2s',
+    fontFamily: 'inherit',
+    marginBottom: 20,
+  },
+  submitBtnDisabled: {
+    opacity: 0.5,
+    cursor: 'not-allowed',
+  },
+  signinRow: {
+    textAlign: 'center',
+    fontSize: 13,
+    color: '#555',
+  },
+};
+
+const STRENGTH_COLORS = ['#E24B4A', '#E24B4A', '#e8622a', '#639922', '#3b6d11'];
+const STRENGTH_LABELS = ['', 'Weak', 'Fair', 'Good', 'Strong', 'Very strong'];
+
 export default function SignupPage() {
   const navigate = useNavigate();
   const { signup, loading, error: authError } = useAuth();
+
   const [formData, setFormData] = useState({
     displayName: '',
     email: '',
@@ -17,6 +204,7 @@ export default function SignupPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [apiError, setApiError] = useState('');
   const [passwordStrength, setPasswordStrength] = useState(0);
+  const [focusedField, setFocusedField] = useState(null);
 
   const validatePassword = (password) => {
     let strength = 0;
@@ -30,19 +218,16 @@ export default function SignupPage() {
 
   const validateForm = () => {
     const newErrors = {};
-
     if (!formData.displayName) {
       newErrors.displayName = 'Display name is required';
     } else if (formData.displayName.length < 2) {
       newErrors.displayName = 'Display name must be at least 2 characters';
     }
-
     if (!formData.email) {
       newErrors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = 'Invalid email format';
     }
-
     if (!formData.password) {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 8) {
@@ -50,49 +235,34 @@ export default function SignupPage() {
     } else if (!/[a-z]/.test(formData.password) || !/[A-Z]/.test(formData.password) || !/[0-9]/.test(formData.password)) {
       newErrors.password = 'Password must contain uppercase, lowercase, and numbers';
     }
-
     if (!formData.confirmPassword) {
       newErrors.confirmPassword = 'Please confirm your password';
     } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
     }
-
     return newErrors;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    if (name === 'password') {
-      setPasswordStrength(validatePassword(value));
-    }
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: '',
-      }));
-    }
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (name === 'password') setPasswordStrength(validatePassword(value));
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setApiError('');
-
     const newErrors = validateForm();
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
-
     const result = await signup({
       displayName: formData.displayName,
       email: formData.email,
       password: formData.password,
     });
-
     if (result.success) {
       navigate('/onboarding');
     } else {
@@ -100,40 +270,45 @@ export default function SignupPage() {
     }
   };
 
-  const getPasswordStrengthColor = () => {
-    if (passwordStrength <= 1) return 'bg-red-500';
-    if (passwordStrength <= 2) return 'bg-yellow-500';
-    if (passwordStrength <= 3) return 'bg-blue-500';
-    return 'bg-green-500';
-  };
+  const inputStyle = (fieldName, withToggle = false) => ({
+    ...S.input,
+    ...(withToggle ? S.inputWithToggle : {}),
+    ...(errors[fieldName] ? S.inputError : {}),
+    ...(focusedField === fieldName ? S.inputFocused : {}),
+  });
+
+  const strengthColor = STRENGTH_COLORS[passwordStrength] || '#2a2a2a';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-600 to-green-800 flex items-center justify-center px-4 py-8">
-      <div className="w-full max-w-md">
-        <div className="bg-white rounded-lg shadow-xl p-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 text-center">
-              Join FitNova
-            </h1>
-            <p className="text-gray-600 text-center mt-2">
-              Create your account and start your fitness journey
-            </p>
+    <div style={S.page}>
+      <div style={S.card}>
+
+        {/* Logo */}
+        <div style={S.logo}>
+          <span style={S.logoText}>
+            Fit<span style={S.logoAccent}>Nova</span>
+          </span>
+        </div>
+
+        <h1 style={S.heading}>Create your account</h1>
+        <p style={S.subheading}>Start your fitness journey today</p>
+
+        {/* Error banner */}
+        {(apiError || authError) && (
+          <div style={S.errorBanner}>
+            <FiAlertCircle style={S.errorBannerIcon} size={15} />
+            <p style={S.errorBannerText}>{apiError || authError}</p>
           </div>
+        )}
 
-          {(apiError || authError) && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
-              <FiAlertCircle className="text-red-600 mt-0.5 flex-shrink-0" />
-              <p className="text-red-700 text-sm">{apiError || authError}</p>
-            </div>
-          )}
+        <form onSubmit={handleSubmit}>
+          <div style={S.fieldGroup}>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Display name */}
             <div>
-              <label htmlFor="displayName" className="block text-sm font-medium text-gray-700 mb-2">
-                Display Name
-              </label>
-              <div className="relative">
-                <FiUser className="absolute left-3 top-3 text-gray-400" />
+              <label htmlFor="displayName" style={S.label}>Display name</label>
+              <div style={S.inputWrap}>
+                <FiUser style={S.inputIcon} />
                 <input
                   id="displayName"
                   type="text"
@@ -141,22 +316,19 @@ export default function SignupPage() {
                   value={formData.displayName}
                   onChange={handleChange}
                   placeholder="John Doe"
-                  className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition ${
-                    errors.displayName ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  style={inputStyle('displayName')}
+                  onFocus={() => setFocusedField('displayName')}
+                  onBlur={() => setFocusedField(null)}
                 />
               </div>
-              {errors.displayName && (
-                <p className="text-red-600 text-sm mt-1">{errors.displayName}</p>
-              )}
+              {errors.displayName && <p style={S.errorText}>{errors.displayName}</p>}
             </div>
 
+            {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
-              </label>
-              <div className="relative">
-                <FiMail className="absolute left-3 top-3 text-gray-400" />
+              <label htmlFor="email" style={S.label}>Email address</label>
+              <div style={S.inputWrap}>
+                <FiMail style={S.inputIcon} />
                 <input
                   id="email"
                   type="email"
@@ -164,22 +336,19 @@ export default function SignupPage() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="you@example.com"
-                  className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition ${
-                    errors.email ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  style={inputStyle('email')}
+                  onFocus={() => setFocusedField('email')}
+                  onBlur={() => setFocusedField(null)}
                 />
               </div>
-              {errors.email && (
-                <p className="text-red-600 text-sm mt-1">{errors.email}</p>
-              )}
+              {errors.email && <p style={S.errorText}>{errors.email}</p>}
             </div>
 
+            {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <FiLock className="absolute left-3 top-3 text-gray-400" />
+              <label htmlFor="password" style={S.label}>Password</label>
+              <div style={S.inputWrap}>
+                <FiLock style={S.inputIcon} />
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
@@ -187,49 +356,46 @@ export default function SignupPage() {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Enter a strong password"
-                  className={`w-full pl-10 pr-10 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition ${
-                    errors.password ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  style={inputStyle('password', true)}
+                  onFocus={() => setFocusedField('password')}
+                  onBlur={() => setFocusedField(null)}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                  style={S.inputIconRight}
                 >
-                  {showPassword ? <FiEyeOff /> : <FiEye />}
+                  {showPassword ? <FiEyeOff size={14} /> : <FiEye size={14} />}
                 </button>
               </div>
+
+              {/* Strength meter */}
               {formData.password && (
-                <div className="mt-2 space-y-1">
-                  <div className="flex gap-1">
+                <>
+                  <div style={S.strengthBars}>
                     {[...Array(5)].map((_, i) => (
                       <div
                         key={i}
-                        className={`h-1 flex-1 rounded-full ${
-                          i < passwordStrength ? getPasswordStrengthColor() : 'bg-gray-300'
-                        }`}
+                        style={{
+                          ...S.strengthBar,
+                          background: i < passwordStrength ? strengthColor : '#2a2a2a',
+                        }}
                       />
                     ))}
                   </div>
-                  <p className="text-xs text-gray-600">
-                    {passwordStrength <= 1 && 'Weak password'}
-                    {passwordStrength === 2 && 'Fair password'}
-                    {passwordStrength === 3 && 'Good password'}
-                    {passwordStrength >= 4 && 'Strong password'}
+                  <p style={{ ...S.strengthLabel, color: strengthColor }}>
+                    {STRENGTH_LABELS[passwordStrength]}
                   </p>
-                </div>
+                </>
               )}
-              {errors.password && (
-                <p className="text-red-600 text-sm mt-1">{errors.password}</p>
-              )}
+              {errors.password && <p style={S.errorText}>{errors.password}</p>}
             </div>
 
+            {/* Confirm password */}
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <FiLock className="absolute left-3 top-3 text-gray-400" />
+              <label htmlFor="confirmPassword" style={S.label}>Confirm password</label>
+              <div style={S.inputWrap}>
+                <FiLock style={S.inputIcon} />
                 <input
                   id="confirmPassword"
                   type={showConfirmPassword ? 'text' : 'password'}
@@ -237,50 +403,45 @@ export default function SignupPage() {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="Confirm your password"
-                  className={`w-full pl-10 pr-10 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition ${
-                    errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  style={inputStyle('confirmPassword', true)}
+                  onFocus={() => setFocusedField('confirmPassword')}
+                  onBlur={() => setFocusedField(null)}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                  style={S.inputIconRight}
                 >
-                  {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
+                  {showConfirmPassword ? <FiEyeOff size={14} /> : <FiEye size={14} />}
                 </button>
               </div>
               {formData.confirmPassword && formData.password === formData.confirmPassword && (
-                <div className="flex items-center gap-2 mt-2 text-green-600">
-                  <FiCheck size={16} />
-                  <span className="text-sm">Passwords match</span>
+                <div style={S.successRow}>
+                  <FiCheck size={13} />
+                  <span>Passwords match</span>
                 </div>
               )}
-              {errors.confirmPassword && (
-                <p className="text-red-600 text-sm mt-1">{errors.confirmPassword}</p>
-              )}
+              {errors.confirmPassword && <p style={S.errorText}>{errors.confirmPassword}</p>}
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
-            >
-              {loading ? 'Creating account...' : 'Create Account'}
-            </button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-gray-600">
-              Already have an account?{' '}
-              <Link
-                to="/login"
-                className="text-green-600 hover:text-green-700 font-semibold"
-              >
-                Sign in
-              </Link>
-            </p>
           </div>
+
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={loading}
+            style={{ ...S.submitBtn, ...(loading ? S.submitBtnDisabled : {}) }}
+          >
+            {loading ? 'Creating account...' : 'Create account'}
+          </button>
+        </form>
+
+        {/* Sign in link */}
+        <div style={S.signinRow}>
+          Already have an account?{' '}
+          <Link to="/login" style={S.link}>Sign in</Link>
         </div>
+
       </div>
     </div>
   );

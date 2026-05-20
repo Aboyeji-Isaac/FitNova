@@ -5,7 +5,7 @@ import {
     validateSignUp
 } from '../middleware/authValidation.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
-import { getAuth, getDb } from '../services/firebaseAdmin.js';
+import { getAuth, getDb } from '../sevices/firebaseAdmin.js';
 
 const router = express.Router();
 

@@ -12,8 +12,8 @@ import progressRoutes from './routes/progress.js';
 import userRoutes from './routes/users.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { createRateLimiter } from './middleware/rateLimiter.js';
-import { initializeFirebase } from './services/firebaseAdmin.js';
-import { setupSocketHandlers } from './services/socketHandlers.js';
+import { initializeFirebase } from './sevices/firebaseAdmin.js';
+import { setupSocketHandlers } from './sevices/socketHandlers.js';
 
 dotenv.config();
 

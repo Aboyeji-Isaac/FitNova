@@ -1,4 +1,4 @@
-import { verifyToken } from '../services/firebaseAdmin.js';
+import { verifyToken } from '../sevices/firebaseAdmin.js';
 
 export const authMiddleware = async (req, res, next) => {
   try {
